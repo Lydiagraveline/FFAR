@@ -14,8 +14,14 @@ let reef = [];
 // empty array to store new coral
 let coral = [];
 
-let state = "intro" //can be intro,
+let state = "intro"; //can be intro,
+let textJson;
+let textDisplay;
+let lineNum = 0;
 
+function preload() {
+  textJson = loadJSON(`assets/data/text.json`);
+}
 /**
 Description of setup
 */
@@ -48,12 +54,17 @@ Description of draw()
 function draw() {
   background(250, 236, 222, 255);
 
-  if (state === "intro"){
+  textDisplay = `${textJson.line[lineNum]}`;
+
+  if (state === "intro") {
     push();
     textSize(100);
     fill(130, 124, 255);
     textAlign(CENTER);
-    text('intro', width/2, height/2);
+    text(textDisplay, width / 2, height / 2);
+
+    textSize(25);
+    text("next", width - 100, height / 2);
 
     pop();
   }
@@ -66,6 +77,13 @@ function draw() {
 }
 
 function mousePressed() {
-  let corals = createCoral(mouseX, mouseY);
-  reef.push(corals);
+  if (state === "intro") {
+    if (mouseX > width / 2) {
+      lineNum++;
+    } else if (mouseX < width / 2 && lineNum > 0) {
+      lineNum--;
+    }
+  }
+  // let corals = createCoral(mouseX, mouseY);
+  // reef.push(corals);
 }
