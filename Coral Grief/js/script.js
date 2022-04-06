@@ -14,6 +14,8 @@ let reef = [];
 // empty array to store new coral
 let coral = [];
 
+let state = "intro" //can be intro,
+
 /**
 Description of setup
 */
@@ -21,11 +23,11 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   // create inital coral reef
-  for (let i = 0; i < 10; i++) {
-    coral[i] = createCoral(random(100, width - 100), random(100, height - 100));
-    coral[i].setup();
-    reef.push(coral[i]);
-  }
+  // for (let i = 0; i < 10; i++) {
+  //   coral[i] = createCoral(random(100, width - 100), random(100, height - 100));
+  //   coral[i].setup();
+  //   reef.push(coral[i]);
+  // }
 }
 
 /**
@@ -46,11 +48,21 @@ Description of draw()
 function draw() {
   background(250, 236, 222, 255);
 
-  // draw the coral reef
-  for (let i = 0; i < reef.length; i++) {
-    reef[i].setup();
-    reef[i].draw();
+  if (state === "intro"){
+    push();
+    textSize(100);
+    fill(130, 124, 255);
+    textAlign(CENTER);
+    text('intro', width/2, height/2);
+
+    pop();
   }
+
+  // draw the coral reef
+  // for (let i = 0; i < reef.length; i++) {
+  //   reef[i].setup();
+  //   reef[i].draw();
+  // }
 }
 
 function mousePressed() {
