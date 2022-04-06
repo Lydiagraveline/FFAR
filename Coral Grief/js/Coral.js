@@ -2,7 +2,7 @@ class Coral {
   constructor(x, y, radius) {
     this.x = x;
     this.y = y;
-    this.r = radius; // Circle radius
+    this.r = 0; // Circle radius
     this.rInit = radius; // initial radius (because it can grow)
     this.verts = random([20, 22, 24, 26, 28, 30]); // number of vetices that make up the circle
     this.nodes = []; // an array to store the vertices
@@ -14,6 +14,7 @@ class Coral {
     this.showCircle = false; //random([true, false]); // set to true for more variation (runs slower)
     this.circleSize = random(10, 25);
     this.t = 1;
+    this.fullGrown = false;
     // the color palette
     //main color
     this.c = {
@@ -48,6 +49,13 @@ class Coral {
       for (let i = 0; i < 2; i++) this.points[0] = createVector(this.x, this.y);
       this.points[1] = createVector(this.nodes[i].pos.x, this.nodes[i].pos.y);
     }
+
+
+    if (this.r <= this.rInit && this.fullGrown === false){
+      this.r += 0.5
+    } else if (this.r > this.rInit){
+      this.fullGrown = true
+    }
   }
 
   /**
@@ -59,7 +67,9 @@ class Coral {
     this.body();
     this.details();
     this.wobbleFunc();
+    if (this.fullGrown){
     this.hover();
+    }
     }
   }
 
