@@ -20,6 +20,11 @@ let textDisplay;
 let lineNum = 0;
 let initCoral = 12; //number of coral the program starts with
 
+let fade = 0
+let fadeAmount = 2
+let textColor;
+let bg;
+
 function preload() {
   textJson = loadJSON(`assets/data/text.json`);
 }
@@ -27,6 +32,10 @@ function preload() {
 Description of setup
 */
 function setup() {
+  textColor = color(39, 57, 64, 255);
+  bg = color(250, 236, 222, 255);
+  //lineNum = 26
+
   createCanvas(windowWidth, windowHeight);
 
   //create inital coral reef
@@ -79,64 +88,95 @@ function createCoral(x, y, radius) {
   return coral;
 }
 
-
-
 /**
 Description of draw()
 */
 function draw() {
-  background(250, 236, 222, 255);
+  background(bg);
 
   //draw the coral reef
   for (let i = 0; i < reef.length; i++) {
     reef[i].setup();
     reef[i].draw();
-
-    // on lines 2-4, make the coral decay
-    if (lineNum === 2) {
+    //on lines 4-6, make the coral decay
+    if (lineNum === 4) {
       makeDecay(initCoral/3);
-    } else if (lineNum === 3) {
+    } else if (lineNum === 5) {
       makeDecay(2*initCoral/3);
     }
-    else if (lineNum === 4) {
+    else if (lineNum === 6) {
       makeDecay(initCoral);
     }
   }
 
   textDisplay = `${textJson.line[lineNum]}`;
-  fill(130, 124, 255);
+  fade += fadeAmount;
+
+  if (lineNum >= 10){
+    textColor = color(171, 247, 255, fade);
+    bg = color(39, 57, 64, fade)
+  }
+
+  fill(textColor);
+  noStroke();
   textFont("Space Mono");
-  textAlign(CENTER, CENTER);
+  textAlign(CENTER, TOP);
 
-  if (state === "intro") {
-    if (lineNum === 0) {
-      push();
-      textSize(50);
-      text(textDisplay, width / 2, height / 2);
-      textSize(35);
-      text("begin", width - 70, height - 30);
-      pop();
-    } else if (lineNum === 1) {
-      push();
-      textSize(22);
-      text(textDisplay, width / 2, height / 2);
-      pop();
-    } else {
-      push();
-      textSize(18);
-      textAlign(LEFT, CENTER);
-      text(textDisplay, width / 5, height / 2);
-      pop();
-    }
+  if (lineNum === 0) {
+    push();
+    textSize(50);
+    fill(39, 57, 64, fade);
+    text(textDisplay, width / 2, height / 2 - 50);
+    textSize(35);
+    text("begin", width - 70, height - 30);
+    pop();
+  } else if (lineNum === 1) {
+    push();
+    textSize(50);
+    text("Coral Grief", width / 2, height / 2  - 50);
+    fill(39, 57, 64, fade);
+    text(textDisplay, width / 2, height / 2  - 50);
+    pop();
+  } else if (lineNum === 2) {
+    push();
+    textSize(22);
+    text(textDisplay, width / 2, height / 2);
+    pop();
+  } else if (lineNum === 3) {
+    push();
+    textSize(22);
+    text(textDisplay, width / 2, height / 2);
+    pop();
+  } else if (lineNum === 11 || lineNum === 17 || lineNum === 21 || lineNum === 26){
+    push();
+    textSize(50);
+    fill(textColor);
+    text(textDisplay, width / 2, height / 2);
+    pop();
+  }
+  else {
+    push();
+    textSize(18);
+    textAlign(LEFT, CENTER);
+    text(textDisplay, width / 5, height / 2);
+    pop();
+  }
 
-    // display the "next" and "back" text
-    if (lineNum > 0) {
-      push();
-      textSize(35);
-      text("next", width - 70, height - 30);
-      text("back", 70, height - 30);
-      pop();
-    }
+
+  if (lineNum >= 10){
+    // background(39, 57, 64, fade);
+  }
+
+
+
+  // display the "next" and "back" text
+  if (lineNum > 0 ) {
+    push();
+    fill(textColor);
+    textSize(35);
+    text("next", width - 70, height - 30);
+    text("back", 70, height - 30);
+    pop();
   }
 }
 
@@ -150,7 +190,8 @@ function makeDecay(amount) {
 }
 
 function mousePressed() {
-  if (state === "intro") {
+  fade = 0;
+  if (lineNum >= 0 && lineNum < 33) {
     if (mouseX > width / 2) {
       lineNum++;
       console.log(lineNum);
@@ -169,6 +210,8 @@ function mousePressed() {
       lineNum--;
       console.log(lineNum);
     }
+  } else if (lineNum === 33){
+    lineNum = 0;
   }
 
   // let corals = createCoral(mouseX, mouseY);
