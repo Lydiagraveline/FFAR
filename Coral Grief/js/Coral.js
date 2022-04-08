@@ -15,6 +15,7 @@ class Coral {
     this.circleSize = random(10, 25);
     this.t = 1;
     this.fullGrown = false;
+
     // the color palette
     //main color
     this.c = {
@@ -29,6 +30,28 @@ class Coral {
       b: random(100, 240),
       a: random(100, 255),
     };
+
+    this.bleached = {
+      r: 242,//random(220, 255),
+      g: 240,//random(230, 255),
+      b: 240,//random(200, 255),
+      a: random(100, 255),
+    };
+
+    this.bleached2 = {
+      r: 217, //random(177, 199),
+      g: 200, //random(167, 188),
+      b: 191,//random(160, 169),
+      a: random(100, 255),
+    };
+
+    // color fade
+    this.decayRate = 0.1 //random(0.1, 0.08);
+    this.amt = 0;
+    this.from = color(this.c.r, this.c.g, this.c.b);
+    this.from2 = color(this.c2.r, this.c2.g, this.c2.b);
+    this.to = color(this.bleached.r, this.bleached.g, this.bleached.b);
+    this.to2 = color(this.bleached2.r, this.bleached2.g, this.bleached2.b);
 
     // create the nodes
     for (let i = 0; i < this.verts; i++) {
@@ -45,16 +68,20 @@ class Coral {
   create a vector at the center of the coral and at the outermost nodes
   */
   setup() {
+//this.c2 = this.c;
+
+//this.from = color(this.c.r, this.c.g, this.c.b);
+//this.to = color(this.bleached.r, this.bleached.g, this.bleached.b);
+
     for (let i = 0; i < this.nodes.length; i++) {
       for (let i = 0; i < 2; i++) this.points[0] = createVector(this.x, this.y);
       this.points[1] = createVector(this.nodes[i].pos.x, this.nodes[i].pos.y);
     }
 
-
-    if (this.r <= this.rInit && this.fullGrown === false){
-      this.r += 0.5
-    } else if (this.r > this.rInit){
-      this.fullGrown = true
+    if (this.r <= this.rInit && this.fullGrown === false) {
+      this.r += 0.5;
+    } else if (this.r > this.rInit) {
+      this.fullGrown = true;
     }
   }
 
@@ -63,13 +90,13 @@ class Coral {
   */
   draw() {
     // display coral untill it decays
-    if(this.r > -20){
-    this.body();
-    this.details();
-    this.wobbleFunc();
-    if (this.fullGrown){
-    this.hover();
-    }
+    if (this.r > -20) {
+      this.body();
+      this.details();
+      this.wobbleFunc();
+      if (this.fullGrown === true) {
+        this.hover();
+      }
     }
   }
 
@@ -169,6 +196,35 @@ class Coral {
       this.nodes[i].pos.x = x;
       this.nodes[i].pos.y = y;
     }
+  }
+
+  decay() {
+    this.fullGrown = false;
+
+    this.r = this.r - this.decayRate
+
+
+    this.amt += 0.001;
+
+     this.c = {
+     r: lerpColor(this.from, this.to, this.amt),
+     g: lerpColor(this.from, this.to, this.amt),
+     b: lerpColor(this.from, this.to, this.amt)
+    }
+
+    this.c2 = {
+    r: lerpColor(this.from2, this.to2, this.amt),
+    g: lerpColor(this.from2, this.to2, this.amt),
+    b: lerpColor(this.from2, this.to2, this.amt)
+   }
+
+    // this.c2 = {
+    //   r: map(this.r, 0, this.rInit, this.bleached.r, this.c ),
+    //   g: map(this.r, 0, this.rInit, this.bleached.g, this.c ),
+    //   b: map(this.r, 0, this.rInit, this.bleached.b, this.c ),
+    // }
+
+    //this.c2 = lerpColor(from, to, 0.33);
   }
 
   /**

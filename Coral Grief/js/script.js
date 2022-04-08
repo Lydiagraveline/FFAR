@@ -18,6 +18,7 @@ let state = "intro"; //can be intro,
 let textJson;
 let textDisplay;
 let lineNum = 0;
+let initCoral = 12; //number of coral the program starts with
 
 function preload() {
   textJson = loadJSON(`assets/data/text.json`);
@@ -29,7 +30,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   //create inital coral reef
-  while (reef.length < 10) {
+  while (reef.length < initCoral) {
     let coral = {
       x: random(width),
       y: random(height),
@@ -48,8 +49,8 @@ function setup() {
     }
     // if the coral spawn where the text will be, set overlap = true
     if (
-      coral.x >= width / 6 &&
-      coral.x <= width - width / 6 &&
+      coral.x >= width / 6 - coral.r &&
+      coral.x <= width - width / 6 + coral.r &&
       coral.y >= height / 2 - 100 - coral.r &&
       coral.y <= height / 2 + 100 + coral.r
     ) {
@@ -78,6 +79,8 @@ function createCoral(x, y, radius) {
   return coral;
 }
 
+
+
 /**
 Description of draw()
 */
@@ -88,13 +91,22 @@ function draw() {
   for (let i = 0; i < reef.length; i++) {
     reef[i].setup();
     reef[i].draw();
+
+    // on lines 2-4, make the coral decay
+    if (lineNum === 2) {
+      makeDecay(initCoral/3);
+    } else if (lineNum === 3) {
+      makeDecay(2*initCoral/3);
+    }
+    else if (lineNum === 4) {
+      makeDecay(initCoral);
+    }
   }
 
   textDisplay = `${textJson.line[lineNum]}`;
   fill(130, 124, 255);
   textFont("Space Mono");
   textAlign(CENTER, CENTER);
-
 
   if (state === "intro") {
     if (lineNum === 0) {
@@ -126,8 +138,15 @@ function draw() {
       pop();
     }
   }
+}
 
-
+/**
+Call the decay function for a specififed amount of coral in the reef
+*/
+function makeDecay(amount) {
+  for (let i = 0; i < amount; i++) {
+    reef[i].decay();
+  }
 }
 
 function mousePressed() {
