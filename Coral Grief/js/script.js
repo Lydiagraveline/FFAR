@@ -14,11 +14,16 @@ let reef = [];
 // empty array to store new coral
 //let coral = [];
 
-let state = "intro"; //can be intro,
+let music;
+let forward;
+let back;
 let textJson;
 let textDisplay;
 let lineNum = 0;
 let initCoral = 12; //number of coral the program starts with
+let numCoral = 0;
+let decay;
+let numDecay = 0;
 
 let fade = 0
 let fadeAmount = 2
@@ -26,6 +31,9 @@ let textColor;
 let bg;
 
 function preload() {
+  music = loadSound('assets/sounds/soundtrack.mp3');
+  forward = loadSound('assets/sounds/forward.wav');
+  back = loadSound('assets/sounds/back.wav');
   textJson = loadJSON(`assets/data/text.json`);
 }
 /**
@@ -37,6 +45,8 @@ function setup() {
   //lineNum = 26
 
   createCanvas(windowWidth, windowHeight);
+
+  music.loop();
 
   //create inital coral reef
   while (reef.length < initCoral) {
@@ -106,15 +116,26 @@ function draw() {
     }
     else if (lineNum === 6) {
       makeDecay(initCoral);
+    } else if (lineNum === 7){
+      reef = [];
     }
+
+    if (decay === true){
+      makeDecay(numDecay);
+    }
+
   }
 
   textDisplay = `${textJson.line[lineNum]}`;
   fade += fadeAmount;
 
-  if (lineNum >= 10){
+
+  if (lineNum >= 0 && lineNum < 10){
+    textColor = color(39, 57, 64, 255);
+    bg = color(250, 236, 222, 255);
+  } else if (lineNum >= 10){
     textColor = color(171, 247, 255, fade);
-    bg = color(39, 57, 64, fade)
+    bg = color(39, 57, 64)
   }
 
   fill(textColor);
@@ -191,23 +212,47 @@ function makeDecay(amount) {
 
 function mousePressed() {
   fade = 0;
+  // if (lineNum === 0){
+  //   music.play();
+  // }
   if (lineNum >= 0 && lineNum < 33) {
     if (mouseX > width / 2) {
       lineNum++;
+      //forward.play();
       console.log(lineNum);
 
-      //   if (lineNum === 5) {
-      //     let corals = createCoral(100, height / 3, 100);
-      //     reef.push(corals);
-      //   } else if (lineNum === 6) {
-      //     let corals = createCoral((2 * width) / 3, height - 200, 75);
-      //     reef.push(corals);
-      //   } else if (lineNum === 7) {
-      //     let corals = createCoral((2 * width) / 3, height, 100);
-      //     reef.push(corals);
-      //   }
+        if (lineNum >= 8) {
+          numCoral += 1
+          while (reef.length < numCoral){
+          let x = random(width);
+          let y = random(height);
+          let r = random(50, 200);
+          let overlapping = false;
+          if (
+            x >= width / 6 - r &&
+            x <= width - width / 6 + r &&
+            y >= height / 2 - 100 - r &&
+            y <= height / 2 + 100 + r
+          ) {
+            overlapping = true;
+          }
+          if (!overlapping){
+            let corals = createCoral(x, y, r);
+            reef.push(corals);
+          }
+        }
+        if (lineNum >= 11){
+          let c = random(0, 1)
+          if (c > 0.5){
+            decay = true;
+            numDecay += 1
+            console.log(decay)
+          }
+        }
+        }
     } else if (mouseX < width / 2 && lineNum > 0) {
       lineNum--;
+      //back.play();
       console.log(lineNum);
     }
   } else if (lineNum === 33){
